@@ -139,14 +139,22 @@ function App() {
         return
       }
 
-      // discordDM and battleNet: OS-driven paste/send - give user time to focus window
+      if (destination === 'discordDM') {
+        setSuccessMessage('Sending to Discord (auto-focus)...')
+        await window.keeper.osFocusDiscordPasteSend(output)
+        setSuccessMessage('✓ Sent to Discord (active chat)')
+        setTimeout(() => setSuccessMessage(null), 3000)
+        return
+      }
+
+      // battleNet: OS-driven paste/send - give user time to focus window
       setSuccessMessage('Focus target window now... 2')
       await new Promise(resolve => setTimeout(resolve, 1000))
       setSuccessMessage('Focus target window now... 1')
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
+
       await window.keeper.osPasteSend(output)
-      const target = destination === 'discordDM' ? 'Discord DM' : 'focused window'
+      const target = 'focused window'
       setSuccessMessage(`✓ Sent to ${target}`)
       setTimeout(() => setSuccessMessage(null), 3000)
     } catch (e) {
@@ -210,7 +218,7 @@ function App() {
             <label>
               Destination
               <select value={destination} onChange={(e) => setDestination(e.target.value as Destination)}>
-                <option value="discordDM">Discord DM (OS paste/send - must be focused)</option>
+                <option value="discordDM">Discord (auto-focus + send to active chat)</option>
                 <option value="battleNet">Battle.net (OS paste/send - must be focused)</option>
                 <option value="discordWebhook">Discord server channel (webhook)</option>
                 <option value="email">Email (mailto)</option>
@@ -219,7 +227,7 @@ function App() {
 
             {destination === 'discordDM' && (
               <div style={{ padding: '8px', background: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px' }}>
-                ⚠️ Focus the Discord DM window and click in the message box before clicking Forward. This will paste and send automatically.
+                ⚠️ This will briefly bring Discord Desktop to the foreground and send to whatever chat is currently active there.
               </div>
             )}
 

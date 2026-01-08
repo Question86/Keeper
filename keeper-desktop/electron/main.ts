@@ -233,6 +233,49 @@ function registerIpcHandlers() {
     }
   })
 
+  ipcMain.handle('os:focusDiscordPasteSend', async (_event, text: unknown) => {
+    const content = typeof text === 'string' ? text : ''
+    if (!content.trim()) throw new Error('Nothing to send')
+
+    if (process.platform !== 'win32') {
+      throw new Error('focusDiscordPasteSend is only supported on Windows')
+    }
+
+    clipboard.writeText(content)
+    await new Promise((resolve) => setTimeout(resolve, 150))
+
+    const script =
+      "Add-Type -AssemblyName System.Windows.Forms; " +
+      "Add-Type @'\n" +
+      "using System;\n" +
+      "using System.Runtime.InteropServices;\n" +
+      "public static class Win32 {\n" +
+      "  [DllImport(\\\"user32.dll\\\")] public static extern bool SetForegroundWindow(IntPtr hWnd);\n" +
+      "  [DllImport(\\\"user32.dll\\\")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);\n" +
+      "}\n" +
+      "'@; " +
+      "$p = Get-Process Discord -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1; " +
+      "if (-not $p) { throw 'Discord is not running (or no window). Open Discord Desktop first.' }; " +
+      "[Win32]::ShowWindowAsync($p.MainWindowHandle, 9) | Out-Null; " +
+      "[Win32]::SetForegroundWindow($p.MainWindowHandle) | Out-Null; " +
+      "Start-Sleep -Milliseconds 120; " +
+      "[System.Windows.Forms.SendKeys]::SendWait('^v'); " +
+      "Start-Sleep -Milliseconds 100; " +
+      "[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')"
+
+    try {
+      const { stderr } = await execAsync(`powershell -NoProfile -Command "${script}"`)
+      if (stderr) {
+        console.error('PowerShell stderr:', stderr)
+      }
+      return true
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      console.error('OS automation (Discord) error:', msg, err)
+      throw new Error(`OS automation (Discord) failed: ${msg}`)
+    }
+  })
+
   ipcMain.handle('ollama:chat', async (_event, req: OllamaChatRequest): Promise<OllamaChatResponse> => {
     const baseUrl = (req.baseUrl?.trim() || 'http://localhost:11434').replace(/\/$/, '')
     const model = req.model?.trim()

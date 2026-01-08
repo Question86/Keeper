@@ -75,6 +75,9 @@ contextBridge.exposeInMainWorld('keeper', {
   osPasteSend(text: string) {
     return ipcRenderer.invoke('os:pasteSend', text) as Promise<boolean>
   },
+  osFocusDiscordPasteSend(text: string) {
+    return ipcRenderer.invoke('os:focusDiscordPasteSend', text) as Promise<boolean>
+  },
   // Token management
   tokenSave(args: { platform: string; token: string }) {
     return ipcRenderer.invoke('token:save', args) as Promise<boolean>

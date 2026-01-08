@@ -17,6 +17,7 @@ declare global {
 			discordWebhookSend(args: { webhookUrl: string; content: string }): Promise<boolean>
 			openExternal(url: string): Promise<boolean>
 			osPasteSend(text: string): Promise<boolean>
+			osFocusDiscordPasteSend(text: string): Promise<boolean>
 			tokenSave(args: { platform: string; token: string }): Promise<boolean>
 			tokenLoad(platform: string): Promise<string | null>
 			tokenClear(platform: string): Promise<boolean>
