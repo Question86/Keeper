@@ -66,10 +66,42 @@ ${advisorSystem?.trim() ? advisorSystem.trim() : '(none)'}
 		}
 	}
 
-	function handleCopyOutput() {
-		if (llmOutput) {
-			navigator.clipboard.writeText(llmOutput)
+	async function handleSendDraft() {
+		if (!userDraft.trim()) {
+			setError('Please enter your draft reply in Input B')
+			return
 		}
+		setError(null)
+		try {
+			await window.keeper.osFocusDiscordPasteSend(userDraft)
+		} catch (err) {
+			setError(err instanceof Error ? err.message : String(err))
+		}
+	}
+
+	async function handleSendOutput() {
+		if (!llmOutput.trim()) {
+			setError('No output yet. Click Reshape first.')
+			return
+		}
+		setError(null)
+		try {
+			await window.keeper.osFocusDiscordPasteSend(llmOutput)
+		} catch (err) {
+			setError(err instanceof Error ? err.message : String(err))
+		}
+	}
+
+	function handleCopyOutput() {
+		if (!llmOutput.trim()) {
+			setError('No output yet. Click Reshape first.')
+			return
+		}
+		setError(null)
+		// Prefer the app clipboard bridge (more reliable in Electron)
+		window.keeper.writeClipboard(llmOutput).catch(() => {
+			navigator.clipboard.writeText(llmOutput).catch(() => {})
+		})
 	}
 
 	function handleClear() {
@@ -106,6 +138,14 @@ ${advisorSystem?.trim() ? advisorSystem.trim() : '(none)'}
 						</select>
 					</label>
 					<button
+						className="btn-secondary"
+						onClick={handleSendDraft}
+						disabled={!userDraft.trim() || isGenerating}
+						title="Send your draft directly to Discord (auto-focus)"
+					>
+						Send draft
+					</button>
+					<button
 						className="btn-reshape"
 						onClick={handleReshape}
 						disabled={!userDraft.trim() || isGenerating}
@@ -113,11 +153,22 @@ ${advisorSystem?.trim() ? advisorSystem.trim() : '(none)'}
 					>
 						{isGenerating ? 'Reshaping…' : 'Reshape'}
 					</button>
-					{llmOutput && (
-						<button className="btn-secondary" onClick={handleCopyOutput} title="Copy output to clipboard">
-							Copy
-						</button>
-					)}
+					<button
+						className="btn-secondary"
+						onClick={handleSendOutput}
+						disabled={!llmOutput.trim() || isGenerating}
+						title="Send the suggested reply to Discord (auto-focus)"
+					>
+						Send output
+					</button>
+					<button
+						className="btn-secondary"
+						onClick={handleCopyOutput}
+						disabled={!llmOutput.trim()}
+						title="Copy output to clipboard"
+					>
+						Copy output
+					</button>
 				</div>
 				{presetId === 'custom' && (
 					<label className="reshaper-settings-label">
@@ -131,6 +182,8 @@ ${advisorSystem?.trim() ? advisorSystem.trim() : '(none)'}
 					</label>
 				)}
 			</div>
+
+			{error && <div className="reshaper-error">{error}</div>}
 
 			<div className="reshaper-grid">
 				<div className="reshaper-panel">
@@ -176,7 +229,7 @@ ${advisorSystem?.trim() ? advisorSystem.trim() : '(none)'}
 				</div>
 			</div>
 
-			{error && <div className="reshaper-error">{error}</div>}
+
 		</div>
 	)
 }
