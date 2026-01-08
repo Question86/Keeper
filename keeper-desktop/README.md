@@ -1,30 +1,112 @@
-# React + TypeScript + Vite
+# Keeper Desktop
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This directory contains the Electron desktop application for Keeper.
 
-Currently, two official plugins are available:
+For full project documentation, setup instructions, and usage guide, see the [main README](../README.md) at the repository root.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Quick Start
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+### Development Mode
+```bash
+npm install
+npm run dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Available Scripts
+
+- `npm run dev` - Start development server with hot reload
+- `npm run build` - Build the application for production
+- `npm run lint` - Run ESLint to check code quality
+- `npm run preview` - Preview the production build
+
+### Type Checking
+```bash
+npx tsc --noEmit
+```
+
+---
+
+## Project Structure
+
+```
+keeper-desktop/
+├── electron/           # Electron main process
+│   ├── main.ts        # Entry point, window management
+│   ├── database.ts    # SQLite persistence
+│   ├── discord.ts     # Discord bot integration
+│   ├── ollama.ts      # Ollama LLM integration
+│   └── preload.ts     # IPC bridge (secure context)
+├── src/               # React renderer process
+│   ├── App.tsx        # Main React component
+│   ├── components/    # UI components
+│   │   ├── Compose.tsx
+│   │   ├── Chat.tsx
+│   │   ├── ReplyReShaper.tsx
+│   │   └── Settings.tsx
+│   └── types/         # TypeScript definitions
+├── public/            # Static assets
+├── package.json       # Dependencies and scripts
+├── vite.config.ts     # Vite configuration
+└── tsconfig.json      # TypeScript configuration
+```
+
+---
+
+## Technology Stack
+
+- **Electron**: v30.0.1 - Desktop application framework
+- **React**: v18.2.0 - UI library
+- **TypeScript**: v5.2.2 - Type safety
+- **Vite**: v5.1.6 - Build tool and dev server
+- **discord.js**: v13.17.1 - Discord API integration
+- **better-sqlite3**: v12.5.0 - Local database
+- **Ollama**: Local LLM integration (external service)
+
+---
+
+## Key Features
+
+### Main Process (Node.js/Electron)
+- Database management via SQLite
+- Discord bot connection and message handling
+- Ollama API integration for LLM operations
+- Secure token storage using Electron Safe Storage
+- IPC handlers for renderer communication
+
+### Renderer Process (React)
+- **Compose Tab**: Draft and generate content with LLM
+- **Chat Tab**: Browse Discord conversations, send messages
+- **Reply Re-Shaper Tab**: Context-aware reply generation
+- **Settings Tab**: Bot configuration and data management
+
+### Security
+- Context isolation enabled
+- Preload script with constrained IPC API
+- XSS protection via HTML escaping
+- Encrypted token storage
+
+---
+
+## Development Notes
+
+### ESM Compatibility
+The project uses discord.js v13.17.1 (older version) to avoid ESM-related compatibility issues with Electron's CommonJS main process. Future upgrades to newer discord.js versions may require migration to full ESM support.
+
+### Native Modules
+`better-sqlite3` requires native compilation. If you encounter issues:
+
+```bash
+npx electron-rebuild
+```
+
+### Windows Development
+On Windows, you can use the convenience launcher from the repository root:
+```bash
+..\launch.bat
+```
+
+---
+
+For complete documentation, troubleshooting, and usage examples, see the [main README](../README.md).
