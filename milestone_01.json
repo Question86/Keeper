@@ -1,0 +1,8 @@
+{
+  "GOALS": [
+    "Local chat input box",
+    "Selectable instruction snippet",
+    "Local Mistral LLM remodulation step",
+    "Forward finalized text to other chats (agnostic)"
+  ]
+}

@@ -1,0 +1,263 @@
+.settings-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.settings-modal {
+	background: #1e1e1e;
+	border: 1px solid #3e3e3e;
+	border-radius: 8px;
+	width: 90%;
+	max-width: 600px;
+	max-height: 80vh;
+	overflow-y: auto;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.settings-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px;
+	border-bottom: 1px solid #3e3e3e;
+}
+
+.settings-header h2 {
+	margin: 0;
+	font-size: 20px;
+	color: #e0e0e0;
+}
+
+.close-btn {
+	background: none;
+	border: none;
+	color: #999;
+	font-size: 24px;
+	cursor: pointer;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	transition: all 0.2s;
+}
+
+.close-btn:hover {
+	background: #3e3e3e;
+	color: #fff;
+}
+
+.settings-content {
+	padding: 20px;
+}
+
+.settings-section {
+	margin-bottom: 30px;
+}
+
+.settings-section:last-child {
+	margin-bottom: 0;
+}
+
+.settings-section h3 {
+	margin: 0 0 15px 0;
+	font-size: 16px;
+	color: #e0e0e0;
+	font-weight: 600;
+}
+
+.form-group {
+	margin-bottom: 20px;
+}
+
+.form-group label {
+	display: block;
+	margin-bottom: 8px;
+	color: #b0b0b0;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.form-group input[type="password"],
+.form-group input[type="text"] {
+	width: 100%;
+	padding: 10px 12px;
+	background: #2a2a2a;
+	border: 1px solid #3e3e3e;
+	border-radius: 4px;
+	color: #e0e0e0;
+	font-size: 14px;
+	font-family: 'Courier New', monospace;
+	transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+	outline: none;
+	border-color: #007acc;
+}
+
+.form-group input:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.form-group small {
+	display: block;
+	margin-top: 6px;
+	color: #888;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.form-group small a {
+	color: #007acc;
+	text-decoration: none;
+}
+
+.form-group small a:hover {
+	text-decoration: underline;
+}
+
+.button-group {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 15px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.btn-primary {
+	background: #007acc;
+	color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+	background: #005a9e;
+}
+
+.btn-secondary {
+	background: #3e3e3e;
+	color: #e0e0e0;
+}
+
+.btn-secondary:hover:not(:disabled) {
+	background: #4e4e4e;
+}
+
+.btn-danger {
+	background: #d14;
+	color: #fff;
+}
+
+.btn-danger:hover:not(:disabled) {
+	background: #a11;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-danger:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.status-message {
+	padding: 12px;
+	border-radius: 4px;
+	font-size: 14px;
+	margin-top: 15px;
+}
+
+.status-message.status-connected {
+	background: rgba(16, 185, 129, 0.1);
+	border: 1px solid rgba(16, 185, 129, 0.3);
+	color: #10b981;
+}
+
+.status-message.status-error {
+	background: rgba(239, 68, 68, 0.1);
+	border: 1px solid rgba(239, 68, 68, 0.3);
+	color: #ef4444;
+}
+
+.status-message.status-idle,
+.status-message.status-disconnected {
+	background: rgba(59, 130, 246, 0.1);
+	border: 1px solid rgba(59, 130, 246, 0.3);
+	color: #3b82f6;
+}
+
+.privacy-consent {
+	margin-top: 15px;
+	padding: 12px;
+	background: rgba(59, 130, 246, 0.05);
+	border: 1px solid rgba(59, 130, 246, 0.2);
+	border-radius: 4px;
+}
+
+.privacy-consent label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+	margin: 0;
+}
+
+.privacy-consent input[type="checkbox"] {
+	width: auto;
+	cursor: pointer;
+}
+
+.privacy-consent span {
+	color: #b0b0b0;
+	font-size: 13px;
+}
+
+.privacy-policy {
+	background: #2a2a2a;
+	border: 1px solid #3e3e3e;
+	border-radius: 4px;
+	padding: 16px;
+	max-height: 300px;
+	overflow-y: auto;
+	font-size: 13px;
+	line-height: 1.6;
+}
+
+.privacy-policy p {
+	margin: 12px 0 6px 0;
+	color: #e0e0e0;
+}
+
+.privacy-policy p:first-child {
+	margin-top: 0;
+}
+
+.privacy-policy ul {
+	margin: 6px 0 12px 20px;
+	padding: 0;
+	color: #b0b0b0;
+}
+
+.privacy-policy li {
+	margin: 4px 0;
+}

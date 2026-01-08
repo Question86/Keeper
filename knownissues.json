@@ -1,0 +1,13 @@
+{
+  "BLOCKERS": [
+    {
+      "id": "ISSUE_001",
+      "status": "open",
+      "summary": "Implementation details for local Mistral integration and chat-forwarding adapters are not defined yet."
+    }
+  ],
+  "ISSUE_001": {
+    "status": "open",
+    "summary": "Implementation details for local Mistral integration and chat-forwarding adapters are not defined yet."
+  }
+}
