@@ -254,13 +254,26 @@ function registerIpcHandlers() {
       "  [DllImport(\\\"user32.dll\\\")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);\n" +
       "}\n" +
       "'@; " +
-      "$p = Get-Process Discord -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1; " +
-      "if (-not $p) { throw 'Discord is not running (or no window). Open Discord Desktop first.' }; " +
+      // Try to locate a visible Discord window. If Discord is running in tray (no MainWindowHandle),
+      // try to open it via the discord:// protocol and retry for a short period.
+      "$names = @('Discord','DiscordPTB','DiscordCanary'); " +
+      "function Get-DiscordWindowProc { " +
+      "  foreach ($n in $names) { " +
+      "    $p = Get-Process -Name $n -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1; " +
+      "    if ($p) { return $p } " +
+      "  } " +
+      "  return $null " +
+      "}; " +
+      "$p = Get-DiscordWindowProc; " +
+      "if (-not $p) { try { Start-Process 'discord://-/channels/@me' | Out-Null } catch {} }; " +
+      "$p = $null; " +
+      "for ($i=0; $i -lt 15 -and -not $p; $i++) { Start-Sleep -Milliseconds 200; $p = Get-DiscordWindowProc }; " +
+      "if (-not $p) { throw 'Could not find an open Discord Desktop window. Make sure Discord is running and not stuck in tray-only mode, then try again.' }; " +
       "[Win32]::ShowWindowAsync($p.MainWindowHandle, 9) | Out-Null; " +
       "[Win32]::SetForegroundWindow($p.MainWindowHandle) | Out-Null; " +
-      "Start-Sleep -Milliseconds 120; " +
+      "Start-Sleep -Milliseconds 150; " +
       "[System.Windows.Forms.SendKeys]::SendWait('^v'); " +
-      "Start-Sleep -Milliseconds 100; " +
+      "Start-Sleep -Milliseconds 120; " +
       "[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')"
 
     try {
